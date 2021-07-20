@@ -4,7 +4,7 @@ class Api::UsersController < ApplicationController
 
 	def index
 		users = User.all
-		render json: users.order_by(id), status: :ok
+		render json: users, status: :ok
 	end
 
 	def show
@@ -61,12 +61,20 @@ class Api::UsersController < ApplicationController
 		end
 	end
 
-	def type_head
+	def typehead
 		users = User.any_of({ firstName:params[:input]},{ lastName: params[:input]},{ email: params[:input]})
+		if users.present?
+			render json: users, status: :ok
+		else
+			render json:{
+				errors: 'no details found',
+			},status: :not_found
+		end
+
 	end
 
 	def find_user
-		@user = User.where(id: paramsp[:id].to_i)
+		@user = User.where(id: params[:id].to_i)
 	end
 
 	private
